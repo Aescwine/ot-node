@@ -8,7 +8,7 @@ ENV NODE_ENV=testnet
 #Install git, nodejs,python
 RUN apk update
 RUN apk add curl
-RUN apk add wget
+RUN apk add wget npm
 RUN apk add nodejs-current
 RUN apk add make python3 
 
