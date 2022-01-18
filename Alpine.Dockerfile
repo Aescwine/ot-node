@@ -39,6 +39,7 @@ RUN apt-get -qq update
 RUN apt-get -qq -y install wget apt-transport-https
 RUN apt-get -qq -y install git nodejs
 RUN apt-get -qq -y install mysql-server unzip nano
+RUN npm install -g sequelize-cli
 RUN usermod -d /var/lib/mysql/ mysql
 RUN echo "disable_log_bin" >> /etc/mysql/mysql.conf.d/mysqld.cnf
 RUN service mysql start && mysql -u root  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; update mysql.user set plugin = 'mysql_native_password' where User='root'/*\!40100 DEFAULT CHARACTER SET utf8 */; flush privileges;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
