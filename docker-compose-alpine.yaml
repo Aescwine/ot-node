@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  graphdb:
+    container_name: graphdb
+    image: khaller/graphdb-free:latest
+    network_mode: host
+
+  ot-node:
+    container_name: ot-node
+    build:
+      dockerfile: Alpine.Dockerfile
+      context: .
+    depends_on:
+      - graphdb
+    expose:
+      - 8900
+      - 9000
+    
+    volumes:
+      - .origintrail_noderc:/ot-node/.origintrail_noderc
+      - ~/certs/:/root/certs/
+    network_mode: host
+    
