@@ -1,28 +1,20 @@
-FROM alpine:3.7
+FROM mhart/alpine-node:14
 
-LABEL MAINTAINER="OriginTrail"
-LABEL APP="mariadb"
-LABEL APP_REPOSITORY="https://pkgs.alpinelinux.org/package/edge/main/aarch64/mysql"
+#Install Papertrail
+RUN wget https://github.com/papertrail/remote_syslog2/releases/download/v0.20/remote_syslog_linux_amd64.tar.gz
+RUN tar xzf ./remote_syslog_linux_amd64.tar.gz && cd remote_syslog && cp ./remote_syslog /usr/local/bin
+ADD config/papertrail.yml /etc/log_files.yml
 
-ENV TIMEZONE Europe/Paris
-ENV MYSQL_ROOT_PASSWORD root
-ENV MYSQL_DATABASE app
-ENV MYSQL_USER app
-ENV MYSQL_PASSWORD app
-ENV MYSQL_USER_MONITORING monitoring
-ENV MYSQL_PASSWORD_MONITORING monitoring
+#Install nodemon & forever
+RUN npm install forever -g
 
-# Installing packages MariaDB
-RUN apk add --no-cache mysql
-RUN addgroup mysql mysql
+WORKDIR /ot-node
 
-# Work path
-#WORKDIR /scripts
+COPY . .
 
-# Copy of the MySQL startup script
-#COPY scripts/start.sh start.sh
+#Install nppm
+RUN npm install
+RUN npm ci --only=production
+RUN npm install --save form-data
 
-# Creating the persistent volume
-#VOLUME [ "/var/lib/mysql" ]
-
-EXPOSE 3306
+CMD [ "forever index.js" ]
