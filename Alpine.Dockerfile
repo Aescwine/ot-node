@@ -33,5 +33,6 @@ RUN npm install --save form-data
 
 FROM mysql
 #Mysql intialization
-RUN /etc/init.d/mysql start && mysql -u root -pmysql  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; SET PASSWORD FOR root@localhost = PASSWORD(''); FLUSH PRIVILEGES;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
+ENV MYSQL_ROOT_PASSWORD secretadmin
+RUN /etc/init.d/mysql start && mysql -u root -psecretadmin  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; SET PASSWORD FOR root@localhost = PASSWORD(''); FLUSH PRIVILEGES;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
 
