@@ -1,51 +1,28 @@
-#base image
-FROM alpine:latest
+FROM alpine:3.7
 
-MAINTAINER OriginTrail
-LABEL maintainer="OriginTrail"
-ENV NODE_ENV=testnet
+LABEL MAINTAINER="OriginTrail"
+LABEL APP="mariadb"
+LABEL APP_REPOSITORY="https://pkgs.alpinelinux.org/package/edge/main/aarch64/mysql"
 
-#Install git, nodejs,python
-RUN apk update
-RUN apk add curl
-RUN apk add wget npm
-RUN apk add nodejs-current
-RUN apk add make python3 
+ENV TIMEZONE Europe/Paris
+ENV MYSQL_ROOT_PASSWORD root
+ENV MYSQL_DATABASE app
+ENV MYSQL_USER app
+ENV MYSQL_PASSWORD app
+ENV MYSQL_USER_MONITORING monitoring
+ENV MYSQL_PASSWORD_MONITORING monitoring
 
+# Installing packages MariaDB
+RUN apk add --no-cache mysql
+RUN addgroup mysql mysql
 
-#Install Papertrail
-RUN wget https://github.com/papertrail/remote_syslog2/releases/download/v0.20/remote_syslog_linux_amd64.tar.gz
-RUN tar xzf ./remote_syslog_linux_amd64.tar.gz && cd remote_syslog && cp ./remote_syslog /usr/local/bin
-ADD config/papertrail.yml /etc/log_files.yml
+# Work path
+#WORKDIR /scripts
 
-#Install nodemon & forever
-RUN npm install forever -g
+# Copy of the MySQL startup script
+#COPY scripts/start.sh start.sh
 
-WORKDIR /ot-node
+# Creating the persistent volume
+#VOLUME [ "/var/lib/mysql" ]
 
-COPY . .
-
-#Install nppm
-RUN npm install
-RUN npm ci --only=production
-RUN npm install --save form-data
-RUN npm i -g npx
-
-
-FROM ubuntu:20.04
-RUN apt-get -qq update && apt-get -qq -y install curl
-RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
-RUN apt-get -qq update
-RUN apt-get -qq -y install wget apt-transport-https
-RUN apt-get -qq -y install git nodejs
-RUN apt-get -qq -y install mysql-server unzip nano
-
-WORKDIR /ot-node
-COPY . .
-
-RUN npm install
-RUN npm ci --only=production
-RUN usermod -d /var/lib/mysql/ mysql
-RUN echo "disable_log_bin" >> /etc/mysql/mysql.conf.d/mysqld.cnf
-RUN service mysql start && mysql -u root  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; update mysql.user set plugin = 'mysql_native_password' where User='root'/*\!40100 DEFAULT CHARACTER SET utf8 */; flush privileges;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
-
+EXPOSE 3306
