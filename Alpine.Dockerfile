@@ -17,4 +17,4 @@ RUN npm install
 RUN npm ci --only=production
 RUN npm install --save form-data
 
-CMD [ "forever index.js" ]
+CMD [ "forever", "index.js"]
