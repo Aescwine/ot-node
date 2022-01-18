@@ -39,6 +39,10 @@ RUN apt-get -qq update
 RUN apt-get -qq -y install wget apt-transport-https
 RUN apt-get -qq -y install git nodejs
 RUN apt-get -qq -y install mysql-server unzip nano
+
+WORKDIR /ot-node
+COPY . .
+
 RUN npm install
 RUN npm ci --only=production
 RUN usermod -d /var/lib/mysql/ mysql
