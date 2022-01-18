@@ -32,7 +32,7 @@ RUN apk add make python3
 
 
 FROM ubuntu:20.04
-
+RUN apt-get -qq update
 RUN apt-get -qq -y install mysql-server unzip nano
 RUN usermod -d /var/lib/mysql/ mysql
 RUN echo "disable_log_bin" >> /etc/mysql/mysql.conf.d/mysqld.cnf
