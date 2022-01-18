@@ -1,5 +1,5 @@
 #base image
-FROM leafney/docker-alpine-mysql
+FROM alpine:latest
 
 MAINTAINER OriginTrail
 LABEL maintainer="OriginTrail"
@@ -30,6 +30,8 @@ RUN npm install
 RUN npm ci --only=production
 RUN npm install --save form-data
 
+
+FROM mariadb:latest
 #Mysql intialization
 RUN mysql -u root -pmysql  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; SET PASSWORD FOR root@localhost = PASSWORD(''); FLUSH PRIVILEGES;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
 
