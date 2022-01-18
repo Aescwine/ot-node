@@ -14,25 +14,25 @@ RUN apk add make python3
 
 
 #Install Papertrail
-RUN wget https://github.com/papertrail/remote_syslog2/releases/download/v0.20/remote_syslog_linux_amd64.tar.gz
-RUN tar xzf ./remote_syslog_linux_amd64.tar.gz && cd remote_syslog && cp ./remote_syslog /usr/local/bin
-ADD config/papertrail.yml /etc/log_files.yml
+#RUN wget https://github.com/papertrail/remote_syslog2/releases/download/v0.20/remote_syslog_linux_amd64.tar.gz
+#RUN tar xzf ./remote_syslog_linux_amd64.tar.gz && cd remote_syslog && cp ./remote_syslog /usr/local/bin
+#ADD config/papertrail.yml /etc/log_files.yml
 
 #Install nodemon & forever
-RUN npm install forever -g
+#RUN npm install forever -g
 
-WORKDIR /ot-node
+#WORKDIR /ot-node
 
-COPY . .
+#COPY . .
 
 #Install nppm
-RUN npm install
-RUN npm ci --only=production
-RUN npm install --save form-data
+#RUN npm install
+#RUN npm ci --only=production
+#RUN npm install --save form-data
 
 
 FROM mysql
 #Mysql intialization
-ENV MYSQL_ROOT_PASSWORD secretadmin
+ENV MYSQL_ROOT_PASSWORD=secretadmin
 RUN /etc/init.d/mysql start && mysql -u root -psecretadmin  -e "CREATE DATABASE operationaldb /*\!40100 DEFAULT CHARACTER SET utf8 */; SET PASSWORD FOR root@localhost = PASSWORD(''); FLUSH PRIVILEGES;" && npx sequelize --config=./config/sequelizeConfig.js db:migrate
 
