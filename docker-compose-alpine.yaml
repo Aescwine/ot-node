@@ -18,6 +18,6 @@ services:
     
     volumes:
       - .origintrail_noderc:/ot-node/.origintrail_noderc
-      - ~/certs/:/root/certs/
+#      - ~/certs/:/root/certs/
     network_mode: host
     
