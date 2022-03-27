@@ -175,8 +175,11 @@ class OTNode {
 
     async initializeRpcModule() {
         try {
-            const rpcController = this.container.resolve('rpcController');
-            await rpcController.initialize();
+            // const rpcController = this.container.resolve('rpcController');
+            // await rpcController.initialize();
+
+            const rpcControllerNew = this.container.resolve('rpcControllerNew');
+            await rpcControllerNew.initialize();
         } catch (e) {
             this.logger.error({
                 msg: `RPC service initialization failed. Error message: ${e.message}`,
